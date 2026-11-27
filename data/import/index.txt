@@ -1,0 +1,43 @@
+physiques.txt;Tous les tirages physiques;8989
+digitaux.txt;Tous les tirages digitaux;7014
+tous.txt;Tous les tirages (mélangés);16003
+Afterwork.txt;Afterwork (physique);269
+Akwaba.txt;Akwaba (physique);321
+Awale.txt;Awale (physique);320
+Baraka.txt;Baraka (physique);321
+Benediction.txt;Benediction (physique);320
+Cash.txt;Cash (physique);321
+Day_Off.txt;Day Off (physique);75
+Diamant.txt;Diamant (physique);320
+Emergence.txt;Emergence (physique);321
+Espoir.txt;Espoir (physique);283
+Etoile.txt;Etoile (physique);321
+Fortune.txt;Fortune (physique);321
+Fortune_Thursday.txt;Fortune Thursday (physique);268
+Friday_Bonanza.txt;Friday Bonanza (physique);261
+Kado.txt;Kado (physique);321
+La_Matinale.txt;La Matinale (physique);321
+Lucky_Tuesday.txt;Lucky Tuesday (physique);271
+Midweek.txt;Midweek (physique);272
+Moaye.txt;Moaye (physique);320
+Monday_Special.txt;Monday Special (physique);250
+Monni.txt;Monni (physique);321
+National.txt;National (physique);280
+Premiere_Heure.txt;Premiere Heure (physique);321
+Prestige.txt;Prestige (physique);320
+Privilege.txt;Privilege (physique);321
+Reveil.txt;Reveil (physique);321
+Sika.txt;Sika (physique);321
+Soleil.txt;Soleil (physique);26
+Solution.txt;Solution (physique);321
+Soutra.txt;Soutra (physique);320
+Wari.txt;Wari (physique);320
+Digital_21h.txt;Digital 21h (digital);1715
+Digital_22h.txt;Digital 22h (digital);529
+Digital_23h.txt;Digital 23h (digital);1663
+Digital_7h.txt;Digital 7h (digital);2
+Digital_Reveil_7h.txt;Digital Reveil 7h (digital);1663
+Digital_Reveil_8h.txt;Digital Reveil 8h (digital);504
+Nuit_Etoilee.txt;Nuit Etoilee (digital);22
+Special_Weekend_1h.txt;Special Weekend 1h (digital);458
+Special_Weekend_3h.txt;Special Weekend 3h (digital);458

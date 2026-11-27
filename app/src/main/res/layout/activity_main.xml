@@ -184,6 +184,11 @@
             </LinearLayout>
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnOfficiels"
+                style="@style/BoutonPlein"
+                android:text="@string/bouton_officiels" />
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnImporter"
                 style="@style/BoutonContour"
                 android:text="@string/bouton_importer" />

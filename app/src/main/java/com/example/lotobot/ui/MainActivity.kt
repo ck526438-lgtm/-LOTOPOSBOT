@@ -17,6 +17,7 @@ import com.example.lotobot.LotoBot
 import com.example.lotobot.R
 import com.example.lotobot.data.Preferences
 import com.example.lotobot.data.PronosticJour
+import com.example.lotobot.data.ResultatsOfficiels
 import com.example.lotobot.engine.Paris
 import com.example.lotobot.engine.Tirage
 import com.example.lotobot.engine.TirageParser
@@ -90,6 +91,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, StatsActivity::class.java))
         }
         findViewById<MaterialButton>(R.id.btnDemo).setOnClickListener { confirmerDemo() }
+        findViewById<MaterialButton>(R.id.btnOfficiels).setOnClickListener { choisirResultatsOfficiels() }
         findViewById<MaterialButton>(R.id.btnImporter).setOnClickListener {
             choixFichier.launch(arrayOf("text/*", "application/octet-stream", "application/vnd.ms-excel"))
         }
@@ -272,6 +274,54 @@ class MainActivity : AppCompatActivity() {
                         putExtra(Intent.EXTRA_TEXT, texte)
                     }
                     startActivity(Intent.createChooser(envoi, "Exporter l'historique"))
+                }
+            }
+        }
+    }
+
+    // ───────────── Résultats officiels ─────────────
+
+    private fun choisirResultatsOfficiels() {
+        Toast.makeText(this, "Connexion…", Toast.LENGTH_SHORT).show()
+        calcul.execute {
+            val sources = try {
+                ResultatsOfficiels.sources()
+            } catch (e: Exception) {
+                null
+            }
+            runOnUiThread {
+                if (isDestroyed) return@runOnUiThread
+                if (sources.isNullOrEmpty()) {
+                    Toast.makeText(this, "Impossible de joindre le serveur. Vérifie ta connexion.", Toast.LENGTH_LONG).show()
+                    return@runOnUiThread
+                }
+                val libelles = sources.map { "${it.libelle} · ${it.nbTirages} tirages" }.toTypedArray()
+                AlertDialog.Builder(this)
+                    .setTitle("Quel historique analyser ?")
+                    .setItems(libelles) { _, i -> telechargerOfficiels(sources[i]) }
+                    .setNegativeButton("Annuler", null)
+                    .show()
+            }
+        }
+    }
+
+    private fun telechargerOfficiels(source: ResultatsOfficiels.Source) {
+        Toast.makeText(this, "Téléchargement de ${source.nbTirages} tirages…", Toast.LENGTH_SHORT).show()
+        val appContext = applicationContext
+        calcul.execute {
+            val tirages = try {
+                TirageParser.analyser(ResultatsOfficiels.telecharger(source), LotoBot.config).tirages
+            } catch (e: Exception) {
+                emptyList()
+            }
+            if (tirages.isNotEmpty()) LotoBot.historique(appContext).remplacer(tirages)
+            runOnUiThread {
+                if (isDestroyed) return@runOnUiThread
+                if (tirages.isEmpty()) {
+                    Toast.makeText(this, "Échec du téléchargement", Toast.LENGTH_LONG).show()
+                } else {
+                    Toast.makeText(this, "${tirages.size} tirages officiels chargés : ${source.libelle}", Toast.LENGTH_LONG).show()
+                    chargerGrille(forcer = true)
                 }
             }
         }

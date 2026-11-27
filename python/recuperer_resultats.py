@@ -120,6 +120,11 @@ def charger_existant(chemin: Path) -> dict:
     return res
 
 
+def est_digital(tirage: str) -> bool:
+    """Tirages électroniques (générateur) par opposition aux tirages physiques (machine à boules)."""
+    return tirage.startswith("Digital") or "Weekend" in tirage or tirage == "Nuit Etoilee"
+
+
 def nom_fichier(tirage: str) -> str:
     return re.sub(r"[^A-Za-z0-9]+", "_", tirage).strip("_") + ".txt"
 
@@ -160,13 +165,27 @@ def main() -> None:
     par_tirage: dict[str, list] = {}
     for t in lignes:
         par_tirage.setdefault(t["tirage"], []).append(t)
-    with (dossier / "tous.txt").open("w", encoding="utf-8") as f:
-        f.write(entete.format("tous les tirages"))
-        f.writelines(f"{t['date']};{','.join(map(str, t['gagnants']))}\n" for t in lignes)
-    for nom, ts in par_tirage.items():
-        with (dossier / nom_fichier(nom)).open("w", encoding="utf-8") as f:
-            f.write(entete.format(nom))
+    def ecrire(fichier: str, titre: str, ts: list) -> None:
+        with (dossier / fichier).open("w", encoding="utf-8") as f:
+            f.write(entete.format(titre))
             f.writelines(f"{t['date']};{','.join(map(str, t['gagnants']))}\n" for t in ts)
+
+    physiques = [t for t in lignes if not est_digital(t["tirage"])]
+    digitaux = [t for t in lignes if est_digital(t["tirage"])]
+    ecrire("tous.txt", "tous les tirages", lignes)
+    ecrire("physiques.txt", "tirages physiques (machines à boules)", physiques)
+    ecrire("digitaux.txt", "tirages digitaux (générateur électronique)", digitaux)
+    for nom, ts in par_tirage.items():
+        ecrire(nom_fichier(nom), nom, ts)
+
+    # Index lu par l'appli : fichier;libellé;nombre de tirages
+    with (dossier / "index.txt").open("w", encoding="utf-8") as f:
+        f.write(f"physiques.txt;Tous les tirages physiques;{len(physiques)}\n")
+        f.write(f"digitaux.txt;Tous les tirages digitaux;{len(digitaux)}\n")
+        f.write(f"tous.txt;Tous les tirages (mélangés);{len(lignes)}\n")
+        for nom, ts in sorted(par_tirage.items(), key=lambda kv: (est_digital(kv[0]), kv[0])):
+            genre = "digital" if est_digital(nom) else "physique"
+            f.write(f"{nom_fichier(nom)};{nom} ({genre});{len(ts)}\n")
 
     print(f"{len(lignes)} tirages au total ({len(lignes) - avant:+d}), {len(par_tirage)} types de tirage.",
           file=sys.stderr)

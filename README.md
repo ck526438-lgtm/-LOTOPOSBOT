@@ -40,6 +40,16 @@ Un historique ne peut aider que dans un seul cas : une **machine ou des boules r
 - Testé sur une machine simulée où le 7 sort deux fois trop souvent : le 7 est détecté après 3 000 tirages, sans aucun faux positif.
 - Il faut au moins 100 tirages **réels**, idéalement plus de 1 000, et de préférence ceux d'un même horaire de tirage.
 
+## Résultats réels : ce que disent 16 003 tirages officiels
+
+L'analyse complète se trouve dans [docs/ANALYSE_RESULTATS_REELS.md](docs/ANALYSE_RESULTATS_REELS.md). En résumé :
+
+- **Tirages physiques (machines à boules) :** un hasard parfait (p = 0,30), sans aucun biais.
+- **Tirages digitaux :** un **biais réel et confirmé hors échantillon**. Le 88 sort 7,7 % du temps au lieu de 5,6 %.
+- **Rentabilité :** ce biais reste **trop faible pour battre les cotes**. Aucune stratégie testée n'est rentable de façon démontrée.
+
+L'action GitHub **« Résultats officiels Loto Bonheur »** met à jour `data/` chaque nuit. Dans l'appli, le bouton **« Télécharger les résultats officiels »** charge ces données.
+
 ## Importer les vrais résultats
 
 Utilise le bouton **« Importer un fichier de résultats »**. Le fichier contient une ligne par tirage, du plus ancien au plus récent :

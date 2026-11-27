@@ -31,8 +31,11 @@ jobs:
             python3 python/recuperer_resultats.py --mois 2
           fi
 
-      - name: Analyse (tous les tirages)
-        run: python3 python/analyse_loto.py data/import/tous.txt > data/rapport_tous.txt
+      - name: Analyse (physiques / digitaux séparés)
+        run: |
+          rm -f data/rapport_tous.txt
+          python3 python/analyse_loto.py data/import/physiques.txt > data/rapport_physiques.txt
+          python3 python/analyse_loto.py data/import/digitaux.txt > data/rapport_digitaux.txt
 
       - name: Enregistrement
         run: |
