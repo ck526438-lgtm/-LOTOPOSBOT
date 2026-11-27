@@ -1,8 +1,8 @@
 name: Publier une version
 
 on:
-  push:
-    tags: ["v*"]
+  release:
+    types: [published]
 
 permissions:
   contents: write
@@ -26,8 +26,7 @@ jobs:
       - name: Nommer l'APK
         run: cp app/build/outputs/apk/debug/app-debug.apk "LOTOPOSBOT-${GITHUB_REF_NAME}.apk"
 
-      - uses: softprops/action-gh-release@v2
-        with:
-          name: LOTOPOSBOT ${{ github.ref_name }}
-          body_path: docs/NOTES_VERSION.md
-          files: LOTOPOSBOT-${{ github.ref_name }}.apk
+      - name: Attacher l'APK à la Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "${GITHUB_REF_NAME}" "LOTOPOSBOT-${GITHUB_REF_NAME}.apk" --clobber
