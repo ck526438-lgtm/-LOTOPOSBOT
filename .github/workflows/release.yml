@@ -1,6 +1,15 @@
 name: Publier une version
 
+# Deux façons de publier :
+#  1. Actions > « Publier une version » > Run workflow (crée la Release + l'APK)
+#  2. Créer une Release à la main sur GitHub : l'APK y est ajouté automatiquement
 on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Numéro de version (ex. v1.0.0)"
+        required: true
+        default: "v1.0.0"
   release:
     types: [published]
 
@@ -10,6 +19,9 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ github.event_name == 'release' && github.event.release.tag_name || inputs.version }}
+      GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
 
@@ -24,9 +36,16 @@ jobs:
         run: ./gradlew --no-daemon testDebugUnitTest assembleDebug
 
       - name: Nommer l'APK
-        run: cp app/build/outputs/apk/debug/app-debug.apk "LOTOPOSBOT-${GITHUB_REF_NAME}.apk"
+        run: cp app/build/outputs/apk/debug/app-debug.apk "LOTOPOSBOT-${VERSION}.apk"
 
-      - name: Attacher l'APK à la Release
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh release upload "${GITHUB_REF_NAME}" "LOTOPOSBOT-${GITHUB_REF_NAME}.apk" --clobber
+      - name: Créer la Release (lancement manuel)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          gh release create "${VERSION}" "LOTOPOSBOT-${VERSION}.apk" \
+            --target "${GITHUB_SHA}" \
+            --title "LOTOPOSBOT ${VERSION}" \
+            --notes-file docs/NOTES_VERSION.md
+
+      - name: Attacher l'APK (Release créée à la main)
+        if: github.event_name == 'release'
+        run: gh release upload "${VERSION}" "LOTOPOSBOT-${VERSION}.apk" --clobber
