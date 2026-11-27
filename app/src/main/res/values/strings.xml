@@ -10,6 +10,8 @@
     <string name="label_retard">Numéros « en retard » (absents)</string>
     <string name="label_equilibre">Filtres d\'équilibre (parité, somme, dizaines)</string>
 
+    <string name="label_biais">Mode chasseur de biais (machine défectueuse)</string>
+    <string name="bouton_importer">Importer un fichier de résultats (.csv / .txt)</string>
     <string name="titre_ajout">AJOUTER DES RÉSULTATS OFFICIELS</string>
     <string name="hint_tirage">Un tirage par ligne, ex :\n2026-11-20; 12, 34, 56, 78, 90</string>
     <string name="bouton_ajouter">Enregistrer les résultats</string>

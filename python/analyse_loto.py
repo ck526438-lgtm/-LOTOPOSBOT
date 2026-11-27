@@ -203,6 +203,13 @@ def rapport(tirages, cfg: Config, chaud: float, retard: float) -> None:
     print(f"  P(un numéro sort) = 1/{1 / cfg.p:.0f} · sorties attendues/numéro = {n * cfg.p:.1f} · écart actuel attendu = {cfg.ecart_attendu:.0f}")
     for k in range(cfg.grille, 1, -1):
         print(f"  P({k} bons sur {cfg.grille}) = 1 sur {1 / cfg.proba_bons(k):,.0f}".replace(",", " "))
+    if (cfg.maxi, cfg.tires) == (90, 5):
+        print("\nLOTO BONHEUR : RETOUR MOYEN PAR PARI (cotes officielles LONACI)")
+        paris = {"1N": (5 / 90, 10), "PN": (1 / 90, 40), "2N": (10 / 4005, 240),
+                 "3N": (10 / 117480, 2000), "4N": (5 / 2555190, 5000), "5N": (1 / 43949268, 40000)}
+        for nom, (p, cote) in sorted(paris.items(), key=lambda kv: -kv[1][0] * kv[1][1]):
+            print(f"  {nom:3} cote {cote:6d}  1 sur {1 / p:>11,.0f}  rend {100 * p * cote:5.1f} FCFA / 100".replace(",", " "))
+        print("  → le 2N perd le moins ; le 4N rend 1 FCFA pour 100 misés.")
     print("\nPLUS SORTIS")
     for x, v in sorted(s["par_num"].items(), key=lambda kv: (-kv[1]["freq"], kv[0]))[:10]:
         print(f"  {x:02d}  {v['freq']:4d} fois  z = {v['z']:+.2f}")
@@ -213,6 +220,22 @@ def rapport(tirages, cfg: Config, chaud: float, retard: float) -> None:
     if s["p"] is not None:
         print(f"\nKHI-DEUX D'UNIFORMITÉ : χ² = {s['chi2']:.1f} (ddl {cfg.maxi - 1}), p = {s['p']:.3f}")
         print("  → compatible avec un tirage équitable" if s["p"] >= 0.01 else "  → écart inhabituel : vérifie d'abord les données")
+    print("\nCHASSEUR DE BIAIS (test binomial unilatéral, correction de Bonferroni)")
+    if n < 100:
+        print("  Il faut au moins 100 tirages réels.")
+    else:
+        sigma = math.sqrt(n * cfg.p * (1 - cfg.p))
+        biais = []
+        for x, v in s["par_num"].items():
+            z = (v["freq"] - 0.5 - n * cfg.p) / sigma
+            p_corr = min(1.0, 0.5 * math.erfc(z / math.sqrt(2)) * cfg.maxi)
+            if p_corr < 0.05:
+                biais.append((p_corr, x, v["freq"]))
+        if not biais:
+            print("  Aucun numéro significativement sur-représenté → aucun biais exploitable.")
+        for p_corr, x, f in sorted(biais):
+            print(f"  {x:02d}  {f} sorties  p corrigé = {p_corr:.4f}  → à confirmer sur les tirages suivants")
+
     print("\nPARITÉ (nb de pairs par tirage)")
     pairs_tot = cfg.maxi // 2
     for p in range(cfg.tires + 1):

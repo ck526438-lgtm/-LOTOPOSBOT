@@ -9,6 +9,24 @@ object Rapport {
     private fun pct(x: Double) = String.format(Locale.FRANCE, "%.1f %%", x * 100)
     private fun n2(x: Int) = x.toString().padStart(2, '0')
 
+    /** Comparatif des paris Loto Bonheur : le vrai levier mathématique. */
+    fun sectionParis(): String = buildString {
+        appendLine("── LOTO BONHEUR : CE QUE RAPPORTE CHAQUE PARI ──")
+        appendLine("  (cotes officielles LONACI, retour moyen sur 100 FCFA misés)")
+        for (t in Paris.classement()) {
+            appendLine(
+                "  ${t.code.padEnd(3)} cote ${t.cote.toString().padStart(6)}   1 sur ${f(1 / t.probabilite, 0).padStart(9)}" +
+                    "   rend ${f(t.tauxDeRetour * 100, 1).padStart(5)} FCFA"
+            )
+        }
+        val perm = Paris.perm(TypePari.DEUX_N, 4)
+        appendLine("  → Tes 4 numéros en 4N : ${f(TypePari.QUATRE_N.tauxDeRetour * 100, 1)} FCFA rendus / 100.")
+        appendLine("    Les mêmes 4 numéros en 2N Perm (${perm.nbCombinaisons} combinaisons) :")
+        appendLine("    ${f(perm.tauxDeRetour * 100, 1)} FCFA rendus / 100, un gain 1 fois sur ${f(1 / perm.probaAuMoinsUnGain, 0)}.")
+        appendLine("  Tous les paris perdent en moyenne : le 2N perd le moins.")
+        appendLine()
+    }
+
     fun generer(stats: Statistiques, backtest: ResultatBacktest?): String = buildString {
         val c = stats.config
         appendLine("LOTO ${c.numerosParTirage}/${c.maxNumero} · ${stats.nbTirages} tirages analysés")
@@ -17,6 +35,8 @@ object Rapport {
         if (stats.nbTirages == 0) {
             appendLine("Aucun tirage enregistré.")
             appendLine("Ajoute les résultats officiels depuis l'écran principal.")
+            appendLine()
+            if (c.maxNumero == 90 && c.numerosParTirage == 5) append(sectionParis())
             return@buildString
         }
 
@@ -30,6 +50,8 @@ object Rapport {
             appendLine("  P($b bons sur ${c.taillePronostic}) = 1 sur ${f(1 / p, 0)}")
         }
         appendLine()
+
+        if (c.maxNumero == 90 && c.numerosParTirage == 5) append(sectionParis())
 
         appendLine("── NUMÉROS LES PLUS SORTIS (« chauds ») ──")
         stats.plusFrequents(10).forEach {
@@ -58,6 +80,22 @@ object Rapport {
                 appendLine("  → Écart inhabituel. Vérifie d'abord la saisie de l'historique")
                 appendLine("    (doublons, erreurs) avant d'y voir un biais réel.")
             }
+        }
+        appendLine()
+
+        appendLine("── CHASSEUR DE BIAIS (défaut réel de machine ?) ──")
+        if (stats.nbTirages < 100) {
+            appendLine("  Il faut au moins 100 tirages réels (idéalement 1 000+).")
+        } else if (stats.numerosBiaises.isEmpty()) {
+            appendLine("  Aucun numéro significativement sur-représenté")
+            appendLine("  (test binomial corrigé de Bonferroni, seuil 5 %).")
+            appendLine("  → Aucun biais exploitable : le tirage se comporte comme du hasard.")
+        } else {
+            stats.numerosBiaises.forEach {
+                appendLine("  ${n2(it.numero)}  ${it.frequence} sorties  p corrigé = ${f(it.pSurRepresentation, 4)}")
+            }
+            appendLine("  → Possible défaut réel. À confirmer sur les tirages SUIVANTS")
+            appendLine("    avant d'y croire (un biais réel persiste, une coïncidence non).")
         }
         appendLine()
 

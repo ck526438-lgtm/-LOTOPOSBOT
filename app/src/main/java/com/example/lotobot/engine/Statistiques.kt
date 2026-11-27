@@ -16,8 +16,16 @@ data class StatNumero(
     /** Plus long écart observé (y compris l'écart en cours). */
     val ecartMax: Int,
     /** true si le numéro n'est jamais sorti dans l'historique. */
-    val jamaisSorti: Boolean
-)
+    val jamaisSorti: Boolean,
+    /**
+     * p-valeur (unilatérale, corrigée de Bonferroni sur tous les numéros) de l'hypothèse
+     * « ce numéro sort plus souvent que 1 fois sur 18 ». < 0,05 = sur-représentation
+     * statistiquement significative, donc possible défaut réel de la machine ou des boules.
+     */
+    val pSurRepresentation: Double = 1.0
+) {
+    val biaisSignificatif: Boolean get() = pSurRepresentation < 0.05
+}
 
 /** Test du khi-deux d'uniformité des fréquences. */
 data class TestUniformite(
@@ -42,6 +50,8 @@ data class Statistiques(
 ) {
     fun stat(numero: Int): StatNumero = parNumero[numero - 1]
     fun plusFrequents(n: Int) = parNumero.sortedWith(compareByDescending<StatNumero> { it.frequence }.thenBy { it.numero }).take(n)
+    /** Numéros dont la sur-représentation résiste à la correction pour comparaisons multiples. */
+    val numerosBiaises: List<StatNumero> get() = parNumero.filter { it.biaisSignificatif }.sortedBy { it.pSurRepresentation }
     fun plusEnRetard(n: Int) = parNumero.sortedWith(compareByDescending<StatNumero> { it.ecartActuel }.thenBy { it.numero }).take(n)
 }
 
@@ -80,6 +90,10 @@ object StatsEngine {
 
         val parNumero = (1..big).map { num ->
             val actuel = if (derniereSortie[num] < 0) n else n - 1 - derniereSortie[num]
+            // Test binomial unilatéral (approximation normale avec correction de continuité)
+            val pBrute = if (sigma > 0) {
+                MathUtils.queueNormaleSuperieure((frequences[num] - 0.5 - esperance) / sigma)
+            } else 1.0
             StatNumero(
                 numero = num,
                 frequence = frequences[num],
@@ -87,7 +101,8 @@ object StatsEngine {
                 ecartActuel = actuel,
                 ecartMoyen = if (nbEcarts[num] > 0) sommeEcarts[num].toDouble() / nbEcarts[num] else null,
                 ecartMax = maxOf(ecartMax[num], actuel),
-                jamaisSorti = derniereSortie[num] < 0
+                jamaisSorti = derniereSortie[num] < 0,
+                pSurRepresentation = if (n >= 100) minOf(1.0, pBrute * big) else 1.0
             )
         }
 

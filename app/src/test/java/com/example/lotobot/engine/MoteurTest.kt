@@ -68,6 +68,38 @@ class MoteurTest {
     }
 
     @Test
+    fun parisLotoBonheur() {
+        assertEquals(0.5993, TypePari.DEUX_N.tauxDeRetour, 1e-4)
+        assertEquals(0.0098, TypePari.QUATRE_N.tauxDeRetour, 1e-4)
+        assertEquals(TypePari.DEUX_N, Paris.classement().first())
+        val perm = Paris.perm(TypePari.DEUX_N, 4)
+        assertEquals(6, perm.nbCombinaisons)
+        // P(au moins 2 de mes 4 numéros sortent) = somme hypergéométrique
+        assertEquals((2..4).sumOf { cfg.probaBons(it) }, perm.probaAuMoinsUnGain, 1e-12)
+    }
+
+    @Test
+    fun aucunFauxBiaisSurTiragesEquitables() {
+        val s = StatsEngine.calculer(historiqueSimule, cfg)
+        assertTrue(s.numerosBiaises.isEmpty())
+    }
+
+    @Test
+    fun detecteUnVraiBiais() {
+        // Machine truquée : le 7 sort 2 fois plus souvent que la normale (1 fois sur 9)
+        val r = Random(3)
+        val tirages = List(3000) {
+            val autres = (1..90).filter { it != 7 }.shuffled(r)
+            val nums = if (r.nextDouble() < 1.0 / 9) listOf(7) + autres.take(4) else autres.take(5)
+            Tirage("", nums.sorted())
+        }
+        val s = StatsEngine.calculer(tirages, cfg)
+        assertEquals(listOf(7), s.numerosBiaises.map { it.numero })
+        val w = PronosticEngine.poids(s, ReglagesModele(modeBiais = true))
+        assertTrue(w[7] > 1.5 && w[8] == 1.0)
+    }
+
+    @Test
     fun backtestNeBatPasLeHasardSurDesTiragesEquitables() {
         val bt = Backtest.executer(historiqueSimule, cfg, ReglagesModele(1.0, 1.0))!!
         assertEquals(300, bt.nbTests)

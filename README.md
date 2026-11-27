@@ -17,6 +17,38 @@ Application Android (Kotlin) qui analyse l'historique des tirages d'un Loto 5/90
 | **Statistiques** | Top chauds et retards, écarts moyen et maximum, test du khi-deux, parité, **backtest walk-forward** |
 | **Démo** | 500 tirages **simulés** pour tester l'appli (ce ne sont pas de vrais résultats) |
 
+## Le vrai levier : le type de pari
+
+Le Loto Bonheur est un jeu **à cote fixe** (gain = mise × cote). Le choix des numéros ne change donc rien à l'espérance de gain, alors que le **type de pari** la multiplie par 60. Voici les calculs à partir des cotes officielles de la LONACI :
+
+| Pari | Cote | Probabilité | Rendu pour 100 FCFA misés |
+|---|---|---|---|
+| **2N** | 240 | 1 sur 400 | **59,9 FCFA** |
+| 1N | 10 | 1 sur 18 | 55,6 FCFA |
+| PN | 40 | 1 sur 90 | 44,4 FCFA |
+| 3N | 2 000 | 1 sur 11 748 | 17,0 FCFA |
+| 4N | 5 000 | 1 sur 511 038 | **1,0 FCFA** |
+| 5N | 40 000 | 1 sur 43 949 268 | 0,1 FCFA |
+
+Tous les paris perdent en moyenne. Jouer les 4 numéros du jour en **2N Perm** (6 combinaisons) au lieu du **4N** fait passer le retour moyen de 1 % à 60 %, avec un gain environ une fois sur 70. L'appli l'affiche sous chaque grille.
+
+## Le chasseur de biais
+
+Un historique ne peut aider que dans un seul cas : une **machine ou des boules réellement défectueuses**. Le mode « chasseur de biais » ignore les numéros chauds et en retard. Il ne favorise que les numéros sur-représentés de façon **statistiquement significative** (test binomial unilatéral, correction de Bonferroni sur les 90 numéros, seuil de 5 %).
+
+- Sur des tirages équitables, aucun numéro n'est retenu, et la grille est alors tirée uniformément.
+- Testé sur une machine simulée où le 7 sort deux fois trop souvent : le 7 est détecté après 3 000 tirages, sans aucun faux positif.
+- Il faut au moins 100 tirages **réels**, idéalement plus de 1 000, et de préférence ceux d'un même horaire de tirage.
+
+## Importer les vrais résultats
+
+Utilise le bouton **« Importer un fichier de résultats »**. Le fichier contient une ligne par tirage, du plus ancien au plus récent :
+```
+2026-11-20;5,12,34,67,89
+2026-11-21;3,18,40,61,77
+```
+Les résultats officiels sont publiés sur [lotobonheur.ci/resultats](https://lotobonheur.ci/resultats). Tu peux importer un horaire précis (par exemple 10 h) pour analyser une seule machine.
+
 ## Le modèle, en clair
 
 Pour chaque numéro *i* sur *n* tirages (p = 5/90 = 1/18) :

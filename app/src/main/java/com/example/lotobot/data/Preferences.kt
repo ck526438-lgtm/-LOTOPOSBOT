@@ -20,13 +20,15 @@ class Preferences(context: Context) {
         get() = ReglagesModele(
             poidsChaud = sp.getFloat("chaud", 0.5f).toDouble(),
             poidsRetard = sp.getFloat("retard", 0.5f).toDouble(),
-            equilibre = sp.getBoolean("equilibre", true)
+            equilibre = sp.getBoolean("equilibre", true),
+            modeBiais = sp.getBoolean("mode_biais", false)
         )
         set(v) {
             sp.edit()
                 .putFloat("chaud", v.poidsChaud.toFloat())
                 .putFloat("retard", v.poidsRetard.toFloat())
                 .putBoolean("equilibre", v.equilibre)
+                .putBoolean("mode_biais", v.modeBiais)
                 .apply()
         }
 

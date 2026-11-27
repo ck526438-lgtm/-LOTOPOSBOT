@@ -3,6 +3,7 @@ package com.example.lotobot.ui
 import android.Manifest
 import android.app.TimePickerDialog
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.widget.EditText
@@ -16,8 +17,10 @@ import com.example.lotobot.LotoBot
 import com.example.lotobot.R
 import com.example.lotobot.data.Preferences
 import com.example.lotobot.data.PronosticJour
+import com.example.lotobot.engine.Paris
 import com.example.lotobot.engine.Tirage
 import com.example.lotobot.engine.TirageParser
+import com.example.lotobot.engine.TypePari
 import com.example.lotobot.notif.Notifications
 import com.example.lotobot.notif.Planificateur
 import com.google.android.material.button.MaterialButton
@@ -35,6 +38,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var boules: List<TextView>
     private lateinit var tvDate: TextView
     private lateinit var tvDetails: TextView
+    private lateinit var tvConseilPari: TextView
     private lateinit var tvHistorique: TextView
     private lateinit var tvChaud: TextView
     private lateinit var tvRetard: TextView
@@ -53,6 +57,11 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+    private val choixFichier =
+        registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
+            if (uri != null) importerFichier(uri)
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -61,6 +70,7 @@ class MainActivity : AppCompatActivity() {
         boules = listOf(R.id.boule1, R.id.boule2, R.id.boule3, R.id.boule4).map { findViewById<TextView>(it) }
         tvDate = findViewById(R.id.tvDate)
         tvDetails = findViewById(R.id.tvDetails)
+        tvConseilPari = findViewById(R.id.tvConseilPari)
         tvHistorique = findViewById(R.id.tvHistorique)
         tvChaud = findViewById(R.id.tvChaud)
         tvRetard = findViewById(R.id.tvRetard)
@@ -80,6 +90,9 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, StatsActivity::class.java))
         }
         findViewById<MaterialButton>(R.id.btnDemo).setOnClickListener { confirmerDemo() }
+        findViewById<MaterialButton>(R.id.btnImporter).setOnClickListener {
+            choixFichier.launch(arrayOf("text/*", "application/octet-stream", "application/vnd.ms-excel"))
+        }
     }
 
     override fun onResume() {
@@ -123,9 +136,17 @@ class MainActivity : AppCompatActivity() {
         }
         tvDetails.text = "$base  Pairs/impairs : $pairs/${grille.numeros.size - pairs} · Somme : $somme"
 
+        val perm = Paris.perm(TypePari.DEUX_N, grille.numeros.size.coerceIn(2, 10))
+        tvConseilPari.text = "Comment les jouer : en 4N, 100 FCFA misés en rendent " +
+            "${pourcent(TypePari.QUATRE_N.tauxDeRetour)} en moyenne. En 2N Perm (${perm.nbCombinaisons} combinaisons), " +
+            "ils en rendent ${pourcent(perm.tauxDeRetour)}, avec un gain 1 fois sur ${(1 / perm.probaAuMoinsUnGain).toInt()}. " +
+            "Le 2N est le pari le moins perdant du Loto Bonheur."
+
         tvHistorique.text = "Historique enregistré : $nbTirages tirage(s). " +
             (if (nbTirages < 50) "Il en faut au moins 50 pour que les pondérations aient un effet notable." else "")
     }
+
+    private fun pourcent(x: Double) = String.format(Locale.FRANCE, "%.1f", x * 100)
 
     // ───────────── Réglages du modèle ─────────────
 
@@ -158,6 +179,30 @@ class MainActivity : AppCompatActivity() {
         seekRetard.setOnSeekBarChangeListener(ecouteur)
         switchEquilibre.setOnCheckedChangeListener { _, coche ->
             prefs.reglages = prefs.reglages.copy(equilibre = coche)
+        }
+
+        val switchBiais = findViewById<MaterialSwitch>(R.id.switchBiais)
+        switchBiais.isChecked = r.modeBiais
+        seekChaud.isEnabled = !r.modeBiais
+        seekRetard.isEnabled = !r.modeBiais
+        switchBiais.setOnCheckedChangeListener { _, coche ->
+            prefs.reglages = prefs.reglages.copy(modeBiais = coche)
+            seekChaud.isEnabled = !coche
+            seekRetard.isEnabled = !coche
+            if (coche) {
+                AlertDialog.Builder(this)
+                    .setTitle("Mode chasseur de biais")
+                    .setMessage(
+                        "Ce mode ignore les « chauds » et les « retards ». Il ne favorise que les numéros " +
+                            "sortis SIGNIFICATIVEMENT trop souvent (test binomial corrigé, seuil 5 %), " +
+                            "signe possible d'une machine ou de boules défectueuses.\n\n" +
+                            "Il faut au moins 100 tirages réels, idéalement plus de 1 000, et de préférence " +
+                            "ceux d'un même tirage (même heure, même machine). Sans biais détecté, " +
+                            "la grille est tirée uniformément : c'est la réponse honnête."
+                    )
+                    .setPositiveButton("Compris", null)
+                    .show()
+            }
         }
     }
 
@@ -228,6 +273,51 @@ class MainActivity : AppCompatActivity() {
                     }
                     startActivity(Intent.createChooser(envoi, "Exporter l'historique"))
                 }
+            }
+        }
+    }
+
+    /**
+     * Importe un fichier de résultats réels (une ligne par tirage, du plus ancien au plus récent).
+     * Format identique à la saisie : "2026-11-20;5,12,34,67,89".
+     */
+    private fun importerFichier(uri: Uri) {
+        val appContext = applicationContext
+        calcul.execute {
+            val texte = try {
+                appContext.contentResolver.openInputStream(uri)?.bufferedReader()?.use { it.readText() }
+            } catch (e: Exception) {
+                null
+            }
+            val resultat = texte?.let { TirageParser.analyser(it, LotoBot.config) }
+            runOnUiThread {
+                if (resultat == null || resultat.tirages.isEmpty()) {
+                    val detail = resultat?.erreurs?.firstOrNull() ?: "Fichier illisible"
+                    Toast.makeText(this, "Aucun tirage valide. $detail", Toast.LENGTH_LONG).show()
+                    return@runOnUiThread
+                }
+                AlertDialog.Builder(this)
+                    .setTitle("${resultat.tirages.size} tirages trouvés")
+                    .setMessage(
+                        (if (resultat.erreurs.isEmpty()) "" else "${resultat.erreurs.size} ligne(s) invalide(s) ignorée(s).\n\n") +
+                            "Remplacer l'historique actuel, ou ajouter ces tirages à la suite ?"
+                    )
+                    .setPositiveButton("Remplacer") { _, _ -> enregistrerImport(resultat.tirages, remplacer = true) }
+                    .setNegativeButton("Ajouter") { _, _ -> enregistrerImport(resultat.tirages, remplacer = false) }
+                    .setNeutralButton("Annuler", null)
+                    .show()
+            }
+        }
+    }
+
+    private fun enregistrerImport(tirages: List<Tirage>, remplacer: Boolean) {
+        val appContext = applicationContext
+        calcul.execute {
+            val repo = LotoBot.historique(appContext)
+            if (remplacer) repo.remplacer(tirages) else repo.ajouter(tirages)
+            runOnUiThread {
+                Toast.makeText(this, "${tirages.size} tirages importés", Toast.LENGTH_SHORT).show()
+                chargerGrille(forcer = true)
             }
         }
     }

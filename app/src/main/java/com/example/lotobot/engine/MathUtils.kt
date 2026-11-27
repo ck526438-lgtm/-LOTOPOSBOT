@@ -72,6 +72,10 @@ object MathUtils {
         return exp(-x + a * ln(x) - lnGamma(a)) * h
     }
 
+    /** P(Z >= z) pour Z ~ N(0, 1). */
+    fun queueNormaleSuperieure(z: Double): Double =
+        if (z >= 0) 0.5 * gammaQ(0.5, z * z / 2) else 1.0 - 0.5 * gammaQ(0.5, z * z / 2)
+
     /** p-valeur d'un khi-deux : P(X >= stat) pour X ~ χ²(ddl). */
     fun pValeurKhiDeux(stat: Double, ddl: Int): Double = gammaQ(ddl / 2.0, stat / 2.0)
 }

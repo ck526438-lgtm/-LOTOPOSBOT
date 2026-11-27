@@ -53,6 +53,12 @@
                 style="@style/TexteDoux"
                 android:layout_marginTop="14dp" />
 
+            <TextView
+                android:id="@+id/tvConseilPari"
+                style="@style/TexteDoux"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/glacier" />
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnRecalculer"
                 style="@style/BoutonContour"
@@ -107,6 +113,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/label_equilibre"
+                android:textColor="@color/texte" />
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/switchBiais"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/label_biais"
                 android:textColor="@color/texte" />
 
             <TextView
@@ -169,6 +182,11 @@
                     android:layout_marginStart="6dp"
                     android:text="@string/bouton_exporter" />
             </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnImporter"
+                style="@style/BoutonContour"
+                android:text="@string/bouton_importer" />
         </LinearLayout>
 
         <!-- Notification -->

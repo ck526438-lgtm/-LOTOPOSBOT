@@ -10,11 +10,16 @@ import kotlin.random.Random
  * @param poidsChaud   favorise les numéros sortis plus souvent que la moyenne
  * @param poidsRetard  favorise les numéros absents depuis longtemps
  * @param equilibre    applique les filtres d'équilibre (parité, somme, dizaines)
+ * @param modeBiais    « chasseur de biais » : ignore chauds/retards et ne favorise QUE les numéros
+ *                     dont la sur-représentation est statistiquement significative (Bonferroni).
+ *                     C'est le seul cas où un historique peut réellement aider : une machine
+ *                     ou des boules défectueuses. Sans biais détecté, la sélection est uniforme.
  */
 data class ReglagesModele(
     val poidsChaud: Double = 0.5,
     val poidsRetard: Double = 0.5,
-    val equilibre: Boolean = true
+    val equilibre: Boolean = true,
+    val modeBiais: Boolean = false
 )
 
 data class Pronostic(
@@ -43,6 +48,7 @@ object PronosticEngine {
      * avec un historique court, les écarts observés sont surtout du bruit.
      */
     fun poids(stats: Statistiques, reglages: ReglagesModele): DoubleArray {
+        if (reglages.modeBiais) return poidsBiais(stats)
         val n = stats.nbTirages.toDouble()
         // Rétrécissement vers l'uniforme quand l'historique est court
         val confiance = n / (n + HISTORIQUE_DE_REFERENCE)
@@ -55,6 +61,19 @@ object PronosticEngine {
             val z = s.zFrequence.coerceIn(-3.0, 3.0)
             val ratioRetard = (s.ecartActuel / ecartAttendu).coerceIn(0.0, 4.0)
             w[s.numero] = exp(0.35 * aChaud * z) * (1.0 + 0.5 * aRetard * ratioRetard)
+        }
+        return w
+    }
+
+    /**
+     * Mode chasseur de biais : poids 1 partout, sauf pour les numéros significativement
+     * sur-représentés, pondérés par leur fréquence relative observée (bornée à 3).
+     */
+    private fun poidsBiais(stats: Statistiques): DoubleArray {
+        val w = DoubleArray(stats.config.maxNumero + 1) { if (it == 0) 0.0 else 1.0 }
+        val attendu = stats.nbTirages * stats.config.pSortie
+        for (s in stats.numerosBiaises) {
+            w[s.numero] = (s.frequence / attendu).coerceIn(1.0, 3.0)
         }
         return w
     }
