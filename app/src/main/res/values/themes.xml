@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.LotoPosBot" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/violet</item>
+        <item name="colorOnPrimary">#120A2E</item>
+        <item name="colorSecondary">@color/glacier</item>
+        <item name="colorSurface">@color/fond</item>
+        <item name="colorOnSurface">@color/texte</item>
+        <item name="android:colorBackground">@color/fond</item>
+        <item name="android:windowBackground">@drawable/fond_ecran</item>
+        <item name="android:statusBarColor">@color/fond</item>
+        <item name="android:navigationBarColor">@color/fond</item>
+    </style>
+
+    <style name="Carte">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:background">@drawable/carte_verre</item>
+        <item name="android:padding">18dp</item>
+        <item name="android:layout_marginBottom">14dp</item>
+    </style>
+
+    <style name="TitreCarte">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/glacier</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.12</item>
+        <item name="android:layout_marginBottom">10dp</item>
+    </style>
+
+    <style name="TexteDoux">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/texte_doux</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="Boule">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">64dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_marginStart">5dp</item>
+        <item name="android:layout_marginEnd">5dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/boule</item>
+        <item name="android:textColor">@color/texte</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:text">--</item>
+    </style>
+
+    <style name="BoutonPlein" parent="Widget.Material3.Button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="BoutonContour" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="strokeColor">@color/verre_bord</item>
+        <item name="android:textColor">@color/texte</item>
+    </style>
+</resources>

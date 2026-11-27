@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Palette inspirée du logo LOTOPOSBOT : nuit, verre, reflets violet / bleu glacier -->
+    <color name="fond">#0E1120</color>
+    <color name="fond_haut">#1A1C33</color>
+    <color name="verre">#1FFFFFFF</color>
+    <color name="verre_bord">#40C9D4FF</color>
+    <color name="violet">#A78BFA</color>
+    <color name="violet_fonce">#6D4FE0</color>
+    <color name="glacier">#8FD8FF</color>
+    <color name="texte">#EEF1FF</color>
+    <color name="texte_doux">#A9B0CC</color>
+    <color name="alerte">#FFC977</color>
+</resources>

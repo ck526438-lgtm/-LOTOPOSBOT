@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">LOTOPOSBOT</string>
+
+    <string name="titre_pronostic">GRILLE DU JOUR · 4 NUMÉROS</string>
+    <string name="bouton_recalculer">Recalculer avec l\'historique à jour</string>
+
+    <string name="titre_modele">MODÈLE DE PONDÉRATION</string>
+    <string name="label_chaud">Numéros « chauds » (fréquents)</string>
+    <string name="label_retard">Numéros « en retard » (absents)</string>
+    <string name="label_equilibre">Filtres d\'équilibre (parité, somme, dizaines)</string>
+
+    <string name="titre_ajout">AJOUTER DES RÉSULTATS OFFICIELS</string>
+    <string name="hint_tirage">Un tirage par ligne, ex :\n2026-11-20; 12, 34, 56, 78, 90</string>
+    <string name="bouton_ajouter">Enregistrer les résultats</string>
+    <string name="bouton_annuler_dernier">Annuler le dernier</string>
+    <string name="bouton_exporter">Exporter</string>
+
+    <string name="titre_notif">NOTIFICATION QUOTIDIENNE</string>
+    <string name="label_notif">Recevoir la grille chaque jour</string>
+
+    <string name="bouton_stats">Statistiques et backtest</string>
+    <string name="bouton_demo">Charger une démo (tirages SIMULÉS)</string>
+
+    <string name="avertissement">Chaque tirage est indépendant des précédents : aucun historique, aucune « loi du rattrapage » et aucun algorithme ne peut augmenter tes chances. Avec 4 numéros sur un Loto 5/90, la probabilité qu\'ils sortent tous est de 1 sur 511 038. Cette appli est un outil d\'analyse et de divertissement. Joue avec modération ; les jeux d\'argent sont interdits aux mineurs.</string>
+
+    <string name="titre_stats">Statistiques</string>
+    <string name="bouton_partager">Partager le rapport</string>
+    <string name="calcul_en_cours">Calcul en cours…</string>
+
+    <string name="canal_nom">Grille du jour</string>
+    <string name="canal_description">Notification quotidienne avec les 4 numéros du jour</string>
+</resources>
