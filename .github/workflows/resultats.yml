@@ -1,0 +1,43 @@
+name: Résultats officiels Loto Bonheur
+
+on:
+  schedule:
+    - cron: "17 2 * * *"   # chaque nuit, mise à jour des 2 derniers mois
+  workflow_dispatch:
+    inputs:
+      complet:
+        description: "Tout récupérer depuis octobre 2020"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  recuperer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Récupération
+        run: |
+          if [ "${{ inputs.complet }}" = "true" ] || [ ! -f data/loto_bonheur_complet.csv ]; then
+            python3 python/recuperer_resultats.py
+          else
+            python3 python/recuperer_resultats.py --mois 2
+          fi
+
+      - name: Analyse (tous les tirages)
+        run: python3 python/analyse_loto.py data/import/tous.txt > data/rapport_tous.txt
+
+      - name: Enregistrement
+        run: |
+          git config user.name "lotoposbot-bot"
+          git config user.email "lotoposbot-bot@users.noreply.github.com"
+          git add data
+          git diff --cached --quiet || git commit -m "Résultats officiels Loto Bonheur : mise à jour automatique"
+          git push
