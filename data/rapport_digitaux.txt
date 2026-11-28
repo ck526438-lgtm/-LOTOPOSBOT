@@ -1,7 +1,7 @@
-LOTO 5/90 · 7014 tirages · grille de 4 numéros
+LOTO 5/90 · 7020 tirages · grille de 4 numéros
 
 REPÈRES THÉORIQUES
-  P(un numéro sort) = 1/18 · sorties attendues/numéro = 389.7 · écart actuel attendu = 17
+  P(un numéro sort) = 1/18 · sorties attendues/numéro = 390.0 · écart actuel attendu = 17
   P(4 bons sur 4) = 1 sur 511 038
   P(3 bons sur 4) = 1 sur 3 006
   P(2 bons sur 4) = 1 sur 72
@@ -16,38 +16,37 @@ LOTO BONHEUR : RETOUR MOYEN PAR PARI (cotes officielles LONACI)
   → le 2N perd le moins ; le 4N rend 1 FCFA pour 100 misés.
 
 PLUS SORTIS
-  88   512 fois  z = +6.38
-  19   490 fois  z = +5.23
-  33   464 fois  z = +3.87
-  66   458 fois  z = +3.56
-  22   453 fois  z = +3.30
-  77   451 fois  z = +3.20
-  89   443 fois  z = +2.78
-  90   440 fois  z = +2.62
-  79   438 fois  z = +2.52
-  25   437 fois  z = +2.47
+  88   512 fois  z = +6.36
+  19   490 fois  z = +5.21
+  33   465 fois  z = +3.91
+  66   458 fois  z = +3.54
+  22   453 fois  z = +3.28
+  77   451 fois  z = +3.18
+  89   443 fois  z = +2.76
+  90   440 fois  z = +2.61
+  79   438 fois  z = +2.50
+  25   437 fois  z = +2.45
 
 PLUS EN RETARD
-  43  écart  72  moyen 19.5  max 118
-  31  écart  67  moyen 18.4  max 135
-  90  écart  65  moyen 14.8  max 89
-  28  écart  60  moyen 15.9  max 100
-  64  écart  56  moyen 18.9  max 124
-  83  écart  51  moyen 17.2  max 116
-  26  écart  50  moyen 18.9  max 136
-  25  écart  46  moyen 14.9  max 93
-  56  écart  43  moyen 20.1  max 106
-  52  écart  42  moyen 16.6  max 146
+  43  écart  78  moyen 19.5  max 118
+  31  écart  73  moyen 18.4  max 135
+  90  écart  71  moyen 14.8  max 89
+  64  écart  62  moyen 18.9  max 124
+  83  écart  57  moyen 17.2  max 116
+  26  écart  56  moyen 18.9  max 136
+  25  écart  52  moyen 14.9  max 93
+  52  écart  48  moyen 16.6  max 146
+  41  écart  46  moyen 17.1  max 103
+  34  écart  45  moyen 18.6  max 104
 
-KHI-DEUX D'UNIFORMITÉ : χ² = 334.8 (ddl 89), p = 0.000
+KHI-DEUX D'UNIFORMITÉ : χ² = 334.5 (ddl 89), p = 0.000
   → écart inhabituel : vérifie d'abord les données
 
 CHASSEUR DE BIAIS (test binomial unilatéral, correction de Bonferroni)
   88  512 sorties  p corrigé = 0.0000  → à confirmer sur les tirages suivants
   19  490 sorties  p corrigé = 0.0000  → à confirmer sur les tirages suivants
-  33  464 sorties  p corrigé = 0.0053  → à confirmer sur les tirages suivants
-  66  458 sorties  p corrigé = 0.0183  → à confirmer sur les tirages suivants
-  22  453 sorties  p corrigé = 0.0475  → à confirmer sur les tirages suivants
+  33  465 sorties  p corrigé = 0.0047  → à confirmer sur les tirages suivants
+  66  458 sorties  p corrigé = 0.0196  → à confirmer sur les tirages suivants
 
 PARITÉ (nb de pairs par tirage)
   0 pairs : observé   3.2%  théorique   2.8%
@@ -57,12 +56,12 @@ PARITÉ (nb de pairs par tirage)
   4 pairs : observé  15.1%  théorique  15.3%
   5 pairs : observé   2.9%  théorique   2.8%
 
-GRILLE PONDÉRÉE (chaud 50%, retard 50%) : 22 - 28 - 33 - 41
+GRILLE PONDÉRÉE (chaud 50%, retard 50%) : 37 - 38 - 73 - 82
 
 BACKTEST WALK-FORWARD
-  300 grilles · bons/grille : modèle 0.200 · aléatoire 0.167 · théorique 0.222 · z = -0.85
-    0 bon(s) :  81.3%  attendu  79.2%
-    1 bon(s) :  17.3%  attendu  19.3%
+  300 grilles · bons/grille : modèle 0.197 · aléatoire 0.180 · théorique 0.222 · z = -0.98
+    0 bon(s) :  81.7%  attendu  79.2%
+    1 bon(s) :  17.0%  attendu  19.3%
     2 bon(s) :   1.3%  attendu   1.4%
     3 bon(s) :   0.0%  attendu   0.0%
     4 bon(s) :   0.0%  attendu   0.0%

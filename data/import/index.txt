@@ -1,7 +1,7 @@
-physiques.txt;Tous les tirages physiques;8989
-digitaux.txt;Tous les tirages digitaux;7014
-tous.txt;Tous les tirages (mélangés);16003
-Afterwork.txt;Afterwork (physique);269
+physiques.txt;Tous les tirages physiques;8993
+digitaux.txt;Tous les tirages digitaux;7020
+tous.txt;Tous les tirages (mélangés);16013
+Afterwork.txt;Afterwork (physique);270
 Akwaba.txt;Akwaba (physique);321
 Awale.txt;Awale (physique);320
 Baraka.txt;Baraka (physique);321
@@ -28,16 +28,16 @@ Prestige.txt;Prestige (physique);320
 Privilege.txt;Privilege (physique);321
 Reveil.txt;Reveil (physique);321
 Sika.txt;Sika (physique);321
-Soleil.txt;Soleil (physique);26
+Soleil.txt;Soleil (physique);27
 Solution.txt;Solution (physique);321
-Soutra.txt;Soutra (physique);320
-Wari.txt;Wari (physique);320
-Digital_21h.txt;Digital 21h (digital);1715
-Digital_22h.txt;Digital 22h (digital);529
-Digital_23h.txt;Digital 23h (digital);1663
+Soutra.txt;Soutra (physique);321
+Wari.txt;Wari (physique);321
+Digital_21h.txt;Digital 21h (digital);1716
+Digital_22h.txt;Digital 22h (digital);530
+Digital_23h.txt;Digital 23h (digital);1664
 Digital_7h.txt;Digital 7h (digital);2
-Digital_Reveil_7h.txt;Digital Reveil 7h (digital);1663
+Digital_Reveil_7h.txt;Digital Reveil 7h (digital);1664
 Digital_Reveil_8h.txt;Digital Reveil 8h (digital);504
 Nuit_Etoilee.txt;Nuit Etoilee (digital);22
-Special_Weekend_1h.txt;Special Weekend 1h (digital);458
-Special_Weekend_3h.txt;Special Weekend 3h (digital);458
+Special_Weekend_1h.txt;Special Weekend 1h (digital);459
+Special_Weekend_3h.txt;Special Weekend 3h (digital);459
